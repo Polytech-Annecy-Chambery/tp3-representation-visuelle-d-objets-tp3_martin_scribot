@@ -41,8 +41,37 @@ class Section:
         # Generates the wall from parameters
         self.generate()   
         
+    def generate(self):
+      self.vertices = [
+            [0, 0, 0], 
+            [self.parameters['width'], 0, 0], 
+
+            [0, 0, self.parameters['height']],
+
+            [self.parameters['width'], 0, self.parameters['height']],
+
+            [0,self.parameters['thickness'],0],
+            
+            [self.parameters['width'],self.parameters['thickness'],0],
+            
+            [0,self.parameters['thickness'],self.parameters['height']],
+            
+            [self.parameters['width'],self.parameters['thickness'],self.parameters['height']]]
+
+            
+      self.faces = [
+        [0,1,3,2],
+        [0,2,6,4],
+        [0,4, 5, 1],
+        [1,3, 7, 5],
+        [2,3,7,6],
+        [4,5,7,6]] 
+    
+
+
     # Getter
     def getParameter(self, parameterKey):
+        
         return self.parameters[parameterKey]
     
     # Setter
@@ -50,14 +79,6 @@ class Section:
         self.parameters[parameterKey] = parameterValue
         return self     
 
-    # Defines the vertices and faces 
-    def generate(self):
-        self.vertices = [ 
-                # Définir ici les sommets
-                ]
-        self.faces = [
-                # définir ici les faces
-                ]   
 
     # Checks if the opening can be created for the object x
     def canCreateOpening(self, x):
@@ -66,16 +87,38 @@ class Section:
         
     # Creates the new sections for the object x
     def createNewSections(self, x):
-        # A compléter en remplaçant pass par votre code
-        pass              
+        pass
+   
         
     # Draws the edges
     def drawEdges(self):
-        # A compléter en remplaçant pass par votre code
-        pass           
+      gl.glPolygonMode(gl.GL_FRONT_AND_BACK,gl.GL_LINE)
+      gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+      
+      gl.glColor3fv([0.1, 0.1, 0.1]) # Couleur gris moyen
+      #gl.glVertex3fv([0, 0, 0])
+      for f in self.faces:
+        for i in f:
+          gl.glVertex3fv(self.vertices[i])
+
+      gl.glEnd()
                     
     # Draws the faces
     def draw(self):
-        # A compléter en remplaçant pass par votre code
-        pass
-  
+      if self.parameters['edges'] == True:
+        self.drawEdges()
+      gl.glPushMatrix()
+      gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL) # on trace les faces : GL_FILL
+      gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+      gl.glColor3fv([0.5, 0.5, 0.5]) # Couleur gris moyen
+      #gl.glVertex3fv([0, 0, 0])
+      for f in self.faces:
+        for i in f:
+          gl.glVertex3fv(self.vertices[i])
+      gl.glEnd()
+      gl.glPopMatrix()
+      
+      
+     
+         
+    

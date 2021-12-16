@@ -66,6 +66,10 @@ class Configuration:
         gl.glClear(gl.GL_COLOR_BUFFER_BIT|gl.GL_DEPTH_BUFFER_BIT)                  
         gl.glEnable(gl.GL_DEPTH_TEST)   
         
+        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL) # on trace les faces : GL_FILL
+        
+       
+
     # Initializes the tranformation matrix    
     def initializeTransformationMatrix(self):     
         gl.glMatrixMode(gl.GL_PROJECTION)
@@ -74,8 +78,8 @@ class Configuration:
 
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
-        gl.glTranslatef(0.0,0.0, self.parameters['screenPosition'])       
-        
+        gl.glTranslatef(0.0,0.0,self.parameters['screenPosition'])       
+        gl.glRotatef(-90, 1, 0, 0)
     # Getter
     def getParameter(self, parameterKey):
         return self.parameters[parameterKey]    
@@ -146,14 +150,31 @@ class Configuration:
         elif self.event.dict['unicode'] == 'a' or self.event.key == pygame.K_a:
             self.parameters['axes'] = not self.parameters['axes']
             pygame.time.wait(300)
+        # Zoom
+        if self.event.dict['unicode'] == 'p':
+          gl.glScalef(1.1,1.1,1.1)
+        elif self.event.dict['unicode'] == 'm':
+          gl.glScalef(1/1.1,1/1.1,1/1.1)
     
     # Processes the MOUSEBUTTONDOWN event
     def processMouseButtonDownEvent(self):
-        pass
-    
+        if self.event.button == 4:
+          gl.glScalef(1.1,1.1,1.1)
+        elif self.event.button == 5:
+          gl.glScale(1/1.1,1/1.1,1/1.1)
     # Processes the MOUSEMOTION event
+    
+    
     def processMouseMotionEvent(self):
-        pass
+        #Rotations
+        if pygame.mouse.get_pressed()[0]==1 and self.event.type == pygame.MOUSEMOTION:
+          gl.glRotate(10,self.event.rel[0],0,0)
+          gl.glRotate(10,0,0,self.event.rel[1])
+        #Translation
+        elif pygame.mouse.get_pressed()[2]==1 and self.event.type == pygame.MOUSEMOTION:
+          gl.glTranslatef(self.event.rel[0]/5,0,0)
+          gl.glTranslatef(0,0,-self.event.rel[1]/5)
+        
          
     # Displays on screen and processes events    
     def display(self): 
